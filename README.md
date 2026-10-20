@@ -1,4 +1,4 @@
-# mini-backup-script
+# backupctl
 
 A small Go project for learning how to publish a file safely on Unix. It
 writes a snapshot so that readers see either the old file or the whole new

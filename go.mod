@@ -1,4 +1,4 @@
-module mini-backup-script
+module backupctl
 
 go 1.26.4
 

@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"testing"
 
-	"mini-backup-script/internal/publish"
+	"backupctl/internal/publish"
 )
 
 func main() {

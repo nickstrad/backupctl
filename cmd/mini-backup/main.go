@@ -1,8 +1,8 @@
 package main
 
 import (
+	"backupctl/internal/publish"
 	"fmt"
-	"mini-backup-script/internal/publish"
 	"os"
 )
 
