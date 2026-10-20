@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+
+	"backupctl/internal/publish"
 )
 
 func main() {
@@ -26,10 +28,14 @@ func newRootCommand() *cobra.Command {
 	}
 	root.AddCommand(&cobra.Command{
 		Use:   "backup",
-		Short: "Publish a snapshot using ./mini-backup",
+		Short: "Publish snapshot.txt under an exclusive lock",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runChild(cmd, exec.CommandContext(cmd.Context(), "./mini-backup"))
+			if err := publish.Publish("snapshot.txt", []byte("snapshot-version=4\n")); err != nil {
+				return fmt.Errorf("publish snapshot: %w", err)
+			}
+			fmt.Fprintln(cmd.OutOrStdout(), "Snapshot published under exclusive lock")
+			return nil
 		},
 	})
 	root.AddCommand(&cobra.Command{

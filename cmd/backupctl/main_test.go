@@ -78,34 +78,26 @@ func mustGetwd(t *testing.T) string {
 
 func TestChildFailure(t *testing.T) {
 	t.Chdir(t.TempDir())
-	for _, args := range [][]string{{"backup"}, {"restore", "destination.txt"}} {
-		output, err := execute(t, args...)
-		if err == nil || !strings.Contains(err.Error(), "command failed") {
-			t.Fatalf("%v: expected child failure, got %v", args, err)
-		}
-		if strings.Contains(output, "Command completed") || strings.Contains(output, "Usage:") {
-			t.Fatalf("unexpected failure output: %q", output)
-		}
+	output, err := execute(t, "restore", "destination.txt")
+	if err == nil || !strings.Contains(err.Error(), "command failed") {
+		t.Fatalf("expected child failure, got %v", err)
+	}
+	if strings.Contains(output, "Command completed") || strings.Contains(output, "Usage:") {
+		t.Fatalf("unexpected failure output: %q", output)
 	}
 }
 
 func TestBackup(t *testing.T) {
 	t.Chdir(t.TempDir())
-	// A stand-in publisher verifies subprocess execution and output forwarding.
-	if err := os.WriteFile("mini-backup", []byte("#!/bin/sh\nprintf 'snapshot-data\\n' > snapshot.txt\nprintf 'published\\n'\nprintf 'diagnostic\\n' >&2\n"), 0700); err != nil {
-		t.Fatal(err)
-	}
 	output, err := execute(t, "backup")
 	if err != nil {
 		t.Fatalf("backup: %v\n%s", err, output)
 	}
 	data, err := os.ReadFile("snapshot.txt")
-	if err != nil || string(data) != "snapshot-data\n" {
+	if err != nil || string(data) != "snapshot-version=4\n" {
 		t.Fatalf("snapshot = %q, error = %v", data, err)
 	}
-	for _, want := range []string{"published", "diagnostic", "Command completed"} {
-		if !strings.Contains(output, want) {
-			t.Fatalf("output %q does not contain %q", output, want)
-		}
+	if !strings.Contains(output, "Snapshot published") {
+		t.Fatalf("missing completion output: %q", output)
 	}
 }

@@ -23,8 +23,7 @@ so it builds on Unix-like systems only (Linux, macOS), not Windows.
 ## Layout
 
 ```
-cmd/mini-backup/    publishes snapshot.txt (contents "snapshot-version=4") in the current directory
-cmd/backupctl/      cobra CLI: backup and restore (with tests)
+cmd/backupctl/      cobra CLI: backup (publishes snapshot.txt) and restore (with tests)
 cmd/bench/          benchmarks Publish and writes the result as CSV
 internal/publish/   the locked atomic publish logic
 scripts/bench.sql   DuckDB query that prints the benchmark CSV as a table
@@ -40,11 +39,11 @@ experiments/        standalone programs, run with `go run` (marked //go:build ig
 
 | Target                   | What it does                                                      |
 | ------------------------ | ----------------------------------------------------------------- |
-| `make` / `make build`    | Builds `./mini-backup` and `./backupctl` in the repo root          |
+| `make` / `make build`    | Builds `./backupctl` in the repo root                              |
 | `make test`              | `go test ./...`                                                   |
 | `make vet`               | `go vet ./...`                                                    |
 | `make bench`             | Runs the benchmark, writes `bench.csv`, prints it with DuckDB      |
-| `make clean`             | Removes the two binaries and `bench.csv`                           |
+| `make clean`             | Removes `backupctl` and `bench.csv`                                |
 | `make run-fd-experiment` | Runs `experiments/fd-reader.go`                                    |
 
 Set `BENCH_CSV` to write the benchmark somewhere else, for example
@@ -52,22 +51,21 @@ Set `BENCH_CSV` to write the benchmark somewhere else, for example
 
 ## Usage
 
-Build first, then run `backupctl` from the directory that holds the
-`mini-backup` binary. `backup` runs `./mini-backup` relative to the current
-directory.
+Build first, then run `backupctl` from the directory that should hold
+`snapshot.txt`.
 
 ```sh
 make build
 
-./backupctl backup                # publishes ./snapshot.txt via ./mini-backup
+./backupctl backup                # publishes ./snapshot.txt
 ./backupctl restore restored.txt  # copies ./snapshot.txt to restored.txt
 ./backupctl --help
 ```
 
 `restore` takes exactly one destination and refuses to copy
-`snapshot.txt` onto itself. Each command prints `Command completed` on
-success. Running `./mini-backup` on its own publishes `snapshot.txt` and
-prints `Snapshot published under exclusive lock`.
+`snapshot.txt` onto itself. `backup` writes `snapshot-version=4` and prints
+`Snapshot published under exclusive lock`; `restore` shells out to `cp` and
+prints `Command completed`.
 
 ## Benchmark
 

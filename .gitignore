@@ -1,12 +1,11 @@
 # Build outputs
-/mini-backup
 /backupctl
 /bin/
 
 # Benchmark output
 bench.csv
 
-# Runtime files written by mini-backup, backupctl and the experiments
+# Runtime files written by backupctl and the experiments
 snapshot.txt
 restored.txt
 state.txt

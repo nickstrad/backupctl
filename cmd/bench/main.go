@@ -23,7 +23,7 @@ func main() {
 }
 
 func run(out string) error {
-	dir, err := os.MkdirTemp("", "mini-backup-bench-")
+	dir, err := os.MkdirTemp("", "backupctl-bench-")
 	if err != nil {
 		return err
 	}
