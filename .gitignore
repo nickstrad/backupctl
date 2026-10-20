@@ -1,0 +1,16 @@
+# Build outputs
+/mini-backup
+/backupctl
+/bin/
+
+# Benchmark output
+bench.csv
+
+# Runtime files written by mini-backup, backupctl and the experiments
+snapshot.txt
+restored.txt
+state.txt
+*.lock
+.snapshot*
+.*.tmp-*
+fd-lab/
